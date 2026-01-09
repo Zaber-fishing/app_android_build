@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --bg-deep: #0A2239;
+    --accent-blue: #3498DB;
+    --text-light: #F8FAFC;
+    --sat: env(safe-area-inset-top);
+    --sab: env(safe-area-inset-bottom);
+}
+
+/* Reset pre správanie ako natívna aplikácia */
+html,
+body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    /* Zákaz scrollovania "za" aplikáciu */
+    position: fixed;
+    /* Fix pre iOS bounce efekt */
+    background-color: var(--bg-deep);
+    color: var(--text-light);
+    font-family: 'Roboto', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    /* Zrušenie modrého bliknutia pri kliku */
+    user-select: none;
+    /* Zákaz označovania textu (okrem inputov) */
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+#root {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Povolenie výberu textu v inputoch */
+input,
+textarea {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mesh-bg {
+    background: radial-gradient(at 0% 0%, #0D2D4D 0, transparent 50%),
+        radial-gradient(at 100% 100%, #152E47 0, transparent 50%),
+        #0A2239;
+}

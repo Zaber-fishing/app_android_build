@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "333536907584",
+    "project_id": "zaber-svk",
+    "storage_bucket": "zaber-svk.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:333536907584:android:83e83457d439bd8b0faaa5",
+        "android_client_info": {
+          "package_name": "com.dreamstream.zaber"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCezlZGFIiE8r6DbjCD7i6s7M88yJIJX4I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

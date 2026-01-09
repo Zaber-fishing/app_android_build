@@ -1,0 +1,8 @@
+{
+  "name": "ZÁBER - Profesionálny rybársky denník (Android Build)",
+  "description": "Inteligentná platforma pre moderných rybárov s AI analýzou úlovkov, revírnym monitoringom a legislatívnym strážcom. Všetko v elegantnom tmavomodrom dizajne.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}

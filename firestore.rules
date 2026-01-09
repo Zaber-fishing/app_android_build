@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Pomocná funkcia na overenie administrátorských práv
+    function isAdmin() {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // GLOBÁLNE NASTAVENIA (Maintenance Mode)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // POUŽÍVATELIA
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      // Používateľ si môže meniť meno/avatar, ale Admin môže meniť aj body (ecoPoints) a status
+      allow update: if request.auth != null && (
+        (request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin', 'email'])) ||
+        isAdmin()
+      );
+    }
+    
+    // ÚLOVKY
+    match /catches/{catchId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && (
+        // 1. Majiteľ alebo Admin môže meniť všetko
+        resource.data.userId == request.auth.uid || 
+        isAdmin() || 
+        // 2. Ostatní môžu meniť LEN lajky a počítadlo komentárov
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likes_uids', 'commentsCount'])
+      );
+      allow delete: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // KOMENTÁRE K ÚLOVKOM
+      match /comments/{commentId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null;
+        allow update, delete: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      }
+    }
+    
+    // NOTIFIKÁCIE
+    match /notifications/{notifId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+    
+    // SÚŤAŽE
+    match /competitions/{compId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    
+    // CHATY
+    match /chats/{chatId} {
+      // Prístup k chatu majú len zúčastnené strany (UID v názve dokumentu oddelené podčiarkovníkom)
+      allow read: if request.auth != null && (request.auth.uid in chatId.split('_') || isAdmin());
+      allow write: if request.auth != null && (request.auth.uid in chatId.split('_') || isAdmin());
+      
+      match /messages/{msgId} {
+        allow read: if request.auth != null && (request.auth.uid in chatId.split('_') || isAdmin());
+        allow create: if request.auth != null && request.resource.data.senderId == request.auth.uid;
+      }
+    }
+
+    // ECO REPORTY (Misia Strážca, Detektív, Reportér)
+    match /ecoReports/{reportId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      // Update statusu (pending -> verified/rejected) môže robiť Admin
+      allow update: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+  }
+}
